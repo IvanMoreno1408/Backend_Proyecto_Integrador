@@ -6,6 +6,7 @@ import { requireRole } from '../middlewares/role.middleware';
 const router = Router();
 
 router.get('/', verifyToken, requireRole('superadmin'), paisController.listar);
+router.get('/activos', verifyToken, requireRole('superadmin'), paisController.listarActivos);
 router.post('/', verifyToken, requireRole('superadmin'), paisController.crear);
 router.put('/:id', verifyToken, requireRole('superadmin'), paisController.actualizar);
 router.delete('/:id', verifyToken, requireRole('superadmin'), paisController.eliminar);

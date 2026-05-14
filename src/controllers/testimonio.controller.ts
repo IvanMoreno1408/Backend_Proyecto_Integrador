@@ -17,6 +17,7 @@ const crearTestimonioSchema = z.object({
   facebook_url: z.string().url().nullable().optional(),
   destacado: z.boolean().optional(),
   pais_id: z.number().int().positive().optional(),
+  estado: z.enum(['borrador', 'publicado', 'despublicado']).optional(),
 });
 
 const actualizarTestimonioSchema = z.object({
@@ -28,6 +29,7 @@ const actualizarTestimonioSchema = z.object({
   instagram_url: z.string().url().nullable().optional(),
   facebook_url: z.string().url().nullable().optional(),
   destacado: z.boolean().optional(),
+  estado: z.enum(['borrador', 'publicado', 'despublicado']).optional(),
 });
 
 const marcarDestacadoSchema = z.object({

@@ -2,9 +2,9 @@
 
 export type RolNombre = 'superadmin' | 'admin_pais' | 'editor';
 
-export type EstadoContenido = 'borrador' | 'publicado' | 'despublicado' | 'eliminado';
+export type EstadoContenido = 'borrador' | 'publicado' | 'despublicado';
 
-export type EstadoSolicitud = 'pendiente' | 'en_proceso' | 'gestionada' | 'cerrada' | 'eliminado';
+export type EstadoSolicitud = 'pendiente' | 'en_proceso' | 'gestionada' | 'cerrada';
 
 export interface Pais {
   id: number;
@@ -87,17 +87,7 @@ export interface SolicitudContacto {
   updated_at: string;
 }
 
-export interface Archivo {
-  id: number;
-  nombre_archivo: string;
-  url: string;
-  tipo_archivo: string;
-  modulo: string;
-  referencia_id: number | null;
-  subido_por: number;
-  created_at: string;
-}
-
+// Internal audit log — used by repository for cross-module logging
 export interface BitacoraAuditoria {
   id: number;
   usuario_id: number | null;
@@ -108,3 +98,4 @@ export interface BitacoraAuditoria {
   ip: string | null;
   created_at: string;
 }
+

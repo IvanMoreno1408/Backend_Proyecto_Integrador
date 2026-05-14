@@ -83,11 +83,12 @@ export interface FiltrosUsuarioDto {
 
 export interface CrearNoticiaDto {
   titulo: string;
-  slug: string;
+  slug?: string;
   resumen: string;
   contenido: string;
   imagen_principal_url?: string | null;
   pais_id?: number;
+  estado?: string;
 }
 
 export interface ActualizarNoticiaDto {
@@ -96,6 +97,7 @@ export interface ActualizarNoticiaDto {
   resumen?: string;
   contenido?: string;
   imagen_principal_url?: string | null;
+  estado?: string;
 }
 
 export interface FiltrosNoticiaDto {
@@ -118,6 +120,7 @@ export interface CrearTestimonioDto {
   facebook_url?: string | null;
   destacado?: boolean;
   pais_id?: number;
+  estado?: string;
 }
 
 export interface ActualizarTestimonioDto {
@@ -129,6 +132,7 @@ export interface ActualizarTestimonioDto {
   instagram_url?: string | null;
   facebook_url?: string | null;
   destacado?: boolean;
+  estado?: string;
 }
 
 export interface FiltrosTestimonioDto {
@@ -160,13 +164,6 @@ export interface FiltrosSolicitudDto {
   estado?: EstadoSolicitud;
   page?: number;
   limit?: number;
-}
-
-// ─── Archivo ──────────────────────────────────────────────────────────────────
-
-export interface ArchivoMetaDto {
-  modulo: string;
-  referencia_id?: number;
 }
 
 // ─── Auditoría ────────────────────────────────────────────────────────────────

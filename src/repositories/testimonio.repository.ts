@@ -16,11 +16,9 @@ export const testimonioRepository = {
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
-    // Exclude 'eliminado' by default unless explicitly filtered
+    // Filter by estado if provided
     if (filtros.estado) {
       query = query.eq('estado', filtros.estado);
-    } else {
-      query = query.neq('estado', 'eliminado');
     }
 
     if (filtros.pais_id !== undefined) {
@@ -70,7 +68,7 @@ export const testimonioRepository = {
   async softDelete(id: number): Promise<void> {
     const { error } = await supabase
       .from('testimonios')
-      .update({ estado: 'eliminado', updated_at: new Date().toISOString() })
+      .delete()
       .eq('id', id);
     if (error) throw error;
   },
@@ -80,11 +78,9 @@ export const testimonioRepository = {
       .from('testimonios')
       .select('id', { count: 'exact', head: true });
 
-    // Exclude 'eliminado' by default unless explicitly filtered
+    // Filter by estado if provided
     if (filtros.estado) {
       query = query.eq('estado', filtros.estado);
-    } else {
-      query = query.neq('estado', 'eliminado');
     }
 
     if (filtros.pais_id !== undefined) {

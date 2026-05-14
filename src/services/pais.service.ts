@@ -9,6 +9,10 @@ export const paisService = {
     return paisRepository.findAll();
   },
 
+  async listarActivos(): Promise<Pais[]> {
+    return paisRepository.findAllActivos();
+  },
+
   async crear(data: CrearPaisDto, usuario: JwtPayload): Promise<Pais> {
     // Enforce uniqueness of codigo
     const existingCodigo = await paisRepository.findByCodigo(data.codigo);

@@ -19,6 +19,16 @@ export const paisRepository = {
     return data ?? [];
   },
 
+  async findAllActivos(): Promise<Pais[]> {
+    const { data, error } = await supabase
+      .from('paises')
+      .select('*')
+      .eq('estado', 'activo')
+      .order('nombre', { ascending: true });
+    if (error) throw error;
+    return data ?? [];
+  },
+
   async findById(id: number): Promise<Pais | null> {
     const { data, error } = await supabase
       .from('paises')

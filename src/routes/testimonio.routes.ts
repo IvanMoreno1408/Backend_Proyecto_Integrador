@@ -6,10 +6,12 @@ import { applyPaisFilter } from '../middlewares/pais.middleware';
 
 const router = Router();
 
-// List testimonials (authenticated, with country filter applied)
+// ─── Rutas públicas (sin token) — ANTES de /:id para evitar conflictos ────────
+router.get('/public/:paisSlug', testimonioController.listarPublicas);
+
+// ─── Rutas admin (con token) ──────────────────────────────────────────────────
 router.get('/', verifyToken, applyPaisFilter, testimonioController.listar);
 
-// Create testimonial
 router.post(
   '/',
   verifyToken,
@@ -17,26 +19,7 @@ router.post(
   testimonioController.crear
 );
 
-// Get single testimonial by ID
-router.get('/:id', verifyToken, testimonioController.obtener);
-
-// Update testimonial
-router.put(
-  '/:id',
-  verifyToken,
-  requireRole('superadmin', 'admin_pais', 'editor'),
-  testimonioController.actualizar
-);
-
-// Delete testimonial (soft delete)
-router.delete(
-  '/:id',
-  verifyToken,
-  requireRole('superadmin', 'admin_pais'),
-  testimonioController.eliminar
-);
-
-// Publish testimonial
+// Rutas con :id van DESPUÉS de las rutas con segmentos fijos
 router.patch(
   '/:id/publicar',
   verifyToken,
@@ -44,7 +27,6 @@ router.patch(
   testimonioController.publicar
 );
 
-// Unpublish testimonial
 router.patch(
   '/:id/despublicar',
   verifyToken,
@@ -52,12 +34,27 @@ router.patch(
   testimonioController.despublicar
 );
 
-// Mark/unmark as destacado
 router.patch(
   '/:id/destacado',
   verifyToken,
   requireRole('superadmin', 'admin_pais'),
   testimonioController.marcarDestacado
+);
+
+router.get('/:id', verifyToken, testimonioController.obtener);
+
+router.put(
+  '/:id',
+  verifyToken,
+  requireRole('superadmin', 'admin_pais', 'editor'),
+  testimonioController.actualizar
+);
+
+router.delete(
+  '/:id',
+  verifyToken,
+  requireRole('superadmin', 'admin_pais'),
+  testimonioController.eliminar
 );
 
 export default router;

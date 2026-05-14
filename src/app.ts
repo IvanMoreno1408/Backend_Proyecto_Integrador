@@ -9,8 +9,6 @@ import usuarioRoutes from './routes/usuario.routes';
 import noticiaRoutes from './routes/noticia.routes';
 import testimonioRoutes from './routes/testimonio.routes';
 import solicitudRoutes from './routes/solicitud.routes';
-import archivoRoutes from './routes/archivo.routes';
-import auditoriaRoutes from './routes/auditoria.routes';
 import publicRoutes from './routes/public.routes';
 
 const app: Application = express();
@@ -37,18 +35,20 @@ app.get('/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok' }, message: 'Server is running', errors: null });
 });
 
-// Routes
+// Rutas privadas (requieren token)
 app.use('/api/auth', authRoutes);
 app.use('/api/paises', paisRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/noticias', noticiaRoutes);
 app.use('/api/testimonios', testimonioRoutes);
 app.use('/api/solicitudes', solicitudRoutes);
-app.use('/api/archivos', archivoRoutes);
-app.use('/api/auditoria', auditoriaRoutes);
 
-// Public routes — no auth required
-app.use('/public', publicRoutes);
+// Rutas públicas (sin token)
+// GET /api/public/noticias/:paisSlug
+// GET /api/public/noticias/:paisSlug/:noticiaSlug
+// GET /api/public/testimonios/:paisSlug
+// POST /api/public/solicitudes
+app.use('/api/public', publicRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);

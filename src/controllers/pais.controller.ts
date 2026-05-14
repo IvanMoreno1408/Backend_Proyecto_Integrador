@@ -34,6 +34,15 @@ export const paisController = {
     }
   },
 
+  async listarActivos(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const paises = await paisService.listarActivos();
+      sendResponse(res, 200, paises, 'Países activos obtenidos exitosamente');
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async crear(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = crearPaisSchema.safeParse(req.body);

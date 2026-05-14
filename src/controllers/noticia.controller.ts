@@ -11,12 +11,14 @@ const crearNoticiaSchema = z.object({
   titulo: z.string().min(1, 'El título es requerido'),
   slug: z
     .string()
-    .min(1, 'El slug es requerido')
-    .regex(/^[a-z0-9-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones'),
+    .min(1)
+    .regex(/^[a-z0-9-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones')
+    .optional(),
   resumen: z.string().min(1, 'El resumen es requerido'),
   contenido: z.string().min(1, 'El contenido es requerido'),
   imagen_principal_url: z.string().url().nullable().optional(),
   pais_id: z.number().int().positive().optional(),
+  estado: z.enum(['borrador', 'publicado', 'despublicado']).optional(),
 });
 
 const actualizarNoticiaSchema = z.object({
@@ -29,6 +31,7 @@ const actualizarNoticiaSchema = z.object({
   resumen: z.string().min(1).optional(),
   contenido: z.string().min(1).optional(),
   imagen_principal_url: z.string().url().nullable().optional(),
+  estado: z.enum(['borrador', 'publicado', 'despublicado']).optional(),
 });
 
 const estadosValidos: EstadoContenido[] = ['borrador', 'publicado', 'despublicado', 'eliminado'];

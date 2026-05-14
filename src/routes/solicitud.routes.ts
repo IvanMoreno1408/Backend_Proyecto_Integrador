@@ -6,16 +6,28 @@ import { applyPaisFilter } from '../middlewares/pais.middleware';
 
 const router = Router();
 
-// Create contact request — public, no auth required
+// ─── Rutas públicas (sin token) ───────────────────────────────────────────────
+// POST /api/solicitudes         — crear solicitud
+// POST /api/solicitudes/public  — alias README
+router.post('/public', solicitudController.crearPublica);
 router.post('/', solicitudController.crearPublica);
 
-// List contact requests (authenticated, with country filter applied)
+// ─── Rutas admin (con token) ──────────────────────────────────────────────────
+// GET /api/solicitudes
 router.get('/', verifyToken, applyPaisFilter, solicitudController.listar);
 
-// Get single contact request by ID
+// GET /api/solicitudes/:id
 router.get('/:id', verifyToken, solicitudController.obtener);
 
-// Update contact request estado
+// PUT /api/solicitudes/:id/status  — alias README (cambia estado + observaciones)
+router.put(
+  '/:id/status',
+  verifyToken,
+  requireRole('superadmin', 'admin_pais'),
+  solicitudController.actualizarEstado
+);
+
+// PATCH /api/solicitudes/:id/estado — nombre original en español
 router.patch(
   '/:id/estado',
   verifyToken,
@@ -23,7 +35,7 @@ router.patch(
   solicitudController.actualizarEstado
 );
 
-// Add/update admin observations
+// PATCH /api/solicitudes/:id/observaciones
 router.patch(
   '/:id/observaciones',
   verifyToken,
@@ -31,7 +43,7 @@ router.patch(
   solicitudController.agregarObservaciones
 );
 
-// Delete contact request (soft delete)
+// DELETE /api/solicitudes/:id
 router.delete(
   '/:id',
   verifyToken,

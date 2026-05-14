@@ -1,16 +1,20 @@
 import { Router } from 'express';
 import { noticiaController } from '../controllers/noticia.controller';
 import { testimonioController } from '../controllers/testimonio.controller';
+import { solicitudController } from '../controllers/solicitud.controller';
 
 const router = Router();
 
-// GET /public/:paisSlug/noticias — published news for a country, paginated
-router.get('/:paisSlug/noticias', noticiaController.listarPublicas);
+// GET /api/public/noticias/:paisSlug — noticias publicadas por país
+router.get('/noticias/:paisSlug', noticiaController.listarPublicas);
 
-// GET /public/:paisSlug/noticias/:noticiaSlug — single published news (404 if not published)
-router.get('/:paisSlug/noticias/:noticiaSlug', noticiaController.obtenerPublica);
+// GET /api/public/noticias/:paisSlug/:noticiaSlug — detalle de noticia publicada
+router.get('/noticias/:paisSlug/:noticiaSlug', noticiaController.obtenerPublica);
 
-// GET /public/:paisSlug/testimonios — published testimonials for a country, paginated
-router.get('/:paisSlug/testimonios', testimonioController.listarPublicas);
+// GET /api/public/testimonios/:paisSlug — testimonios publicados por país
+router.get('/testimonios/:paisSlug', testimonioController.listarPublicas);
+
+// POST /api/public/solicitudes — crear solicitud de contacto sin token
+router.post('/solicitudes', solicitudController.crearPublica);
 
 export default router;

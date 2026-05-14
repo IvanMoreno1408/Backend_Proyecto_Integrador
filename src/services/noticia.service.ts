@@ -51,21 +51,30 @@ export const noticiaService = {
       pais_id = usuario.pais_id;
     }
 
+    // Generate slug from titulo if not provided
+    const slug = data.slug ?? data.titulo
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // remove accents
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-');
+
     // Validate slug uniqueness per country
-    const existing = await noticiaRepository.findBySlugAndPais(data.slug, pais_id);
+    const existing = await noticiaRepository.findBySlugAndPais(slug, pais_id);
     if (existing) {
       throw new AppError('Ya existe una noticia con ese slug en este país', 409);
     }
 
     const noticia = await noticiaRepository.insert({
       titulo: data.titulo,
-      slug: data.slug,
+      slug,
       resumen: data.resumen,
       contenido: data.contenido,
       imagen_principal_url: data.imagen_principal_url ?? null,
       pais_id,
       autor_id: usuario.usuario_id,
-      estado: 'borrador',
+      estado: (data.estado as any) ?? 'borrador',
     });
 
     await auditoriaRepository.registrar({

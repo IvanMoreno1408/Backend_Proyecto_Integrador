@@ -21,9 +21,10 @@ const crearSolicitudSchema = z.object({
 
 const actualizarEstadoSchema = z.object({
   estado: z.enum(
-    ['pendiente', 'en_proceso', 'gestionada', 'cerrada', 'eliminado'],
+    ['pendiente', 'en_proceso', 'gestionada', 'cerrada'],
     { required_error: 'El campo estado es requerido' }
   ),
+  observaciones_admin: z.string().nullable().optional(),
 });
 
 const agregarObservacionesSchema = z.object({

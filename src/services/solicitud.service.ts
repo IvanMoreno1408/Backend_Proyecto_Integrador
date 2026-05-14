@@ -130,6 +130,9 @@ export const solicitudService = {
     if (data.estado !== undefined) {
       updateData.estado = data.estado;
     }
+    if ((data as any).observaciones_admin !== undefined) {
+      updateData.observaciones_admin = (data as any).observaciones_admin;
+    }
 
     // When marking as 'gestionada', record who managed it and when
     if (data.estado === 'gestionada') {

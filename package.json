@@ -10,7 +10,8 @@
     "test": "jest --testPathPattern='tests/(unit|property)' --runInBand",
     "test:property": "jest --testPathPattern='tests/property' --runInBand",
     "test:integration": "jest --testPathPattern='tests/integration' --runInBand",
-    "test:coverage": "jest --coverage --runInBand"
+    "test:coverage": "jest --coverage --runInBand",
+    "seed:superadmin": "ts-node src/scripts/createSuperAdmin.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.39.0",

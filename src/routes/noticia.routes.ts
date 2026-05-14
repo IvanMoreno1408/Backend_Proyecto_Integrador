@@ -6,10 +6,13 @@ import { applyPaisFilter } from '../middlewares/pais.middleware';
 
 const router = Router();
 
-// List news (authenticated, with country filter applied)
+// ─── Rutas públicas (sin token) — ANTES de /:id para evitar conflictos ────────
+router.get('/public/:paisSlug', noticiaController.listarPublicas);
+router.get('/public/:paisSlug/:noticiaSlug', noticiaController.obtenerPublica);
+
+// ─── Rutas admin (con token) ──────────────────────────────────────────────────
 router.get('/', verifyToken, applyPaisFilter, noticiaController.listar);
 
-// Create news
 router.post(
   '/',
   verifyToken,
@@ -17,26 +20,7 @@ router.post(
   noticiaController.crear
 );
 
-// Get single news by ID
-router.get('/:id', verifyToken, noticiaController.obtener);
-
-// Update news
-router.put(
-  '/:id',
-  verifyToken,
-  requireRole('superadmin', 'admin_pais', 'editor'),
-  noticiaController.actualizar
-);
-
-// Delete news (soft delete)
-router.delete(
-  '/:id',
-  verifyToken,
-  requireRole('superadmin', 'admin_pais'),
-  noticiaController.eliminar
-);
-
-// Publish news
+// Rutas con :id van DESPUÉS de las rutas con segmentos fijos
 router.patch(
   '/:id/publicar',
   verifyToken,
@@ -44,12 +28,27 @@ router.patch(
   noticiaController.publicar
 );
 
-// Unpublish news
 router.patch(
   '/:id/despublicar',
   verifyToken,
   requireRole('superadmin', 'admin_pais'),
   noticiaController.despublicar
+);
+
+router.get('/:id', verifyToken, noticiaController.obtener);
+
+router.put(
+  '/:id',
+  verifyToken,
+  requireRole('superadmin', 'admin_pais', 'editor'),
+  noticiaController.actualizar
+);
+
+router.delete(
+  '/:id',
+  verifyToken,
+  requireRole('superadmin', 'admin_pais'),
+  noticiaController.eliminar
 );
 
 export default router;

@@ -73,7 +73,7 @@ export const testimonioService = {
       destacado: data.destacado ?? false,
       pais_id,
       autor_id: usuario.usuario_id,
-      estado: 'borrador',
+      estado: (data.estado as any) ?? 'borrador',
     });
 
     await auditoriaRepository.registrar({
