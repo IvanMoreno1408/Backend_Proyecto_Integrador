@@ -10,4 +10,7 @@ router.post('/', verifyToken, requireRole('superadmin'), usuarioController.crear
 router.put('/:id', verifyToken, requireRole('superadmin'), usuarioController.actualizar);
 router.patch('/:id/desactivar', verifyToken, requireRole('superadmin'), usuarioController.desactivar);
 
+// Parte 17: superadmin cambia contraseña de otro usuario
+router.put('/:id/password', verifyToken, requireRole('superadmin'), usuarioController.cambiarPasswordAdmin);
+
 export default router;

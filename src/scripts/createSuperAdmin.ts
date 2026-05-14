@@ -22,6 +22,9 @@ const SUPERADMIN = {
   email: 'cesar@demo.com',
   username: 'superadmin',
   password: '123456',
+  // Parte 17: pregunta de seguridad para recuperación de contraseña
+  pregunta_seguridad: '¿Cuál es el código inicial del sistema?',
+  respuesta_seguridad: 'cms2026',
 };
 
 async function main() {
@@ -61,14 +64,28 @@ async function main() {
     .single();
 
   if (existente) {
-    console.log(`⚠️  El usuario "${SUPERADMIN.username}" ya existe (id: ${existente.id}). No se creó de nuevo.`);
-    process.exit(0);
+    console.log(`⚠️  El usuario "${SUPERADMIN.username}" ya existe (id: ${existente.id}).`);
+    console.log('   Eliminando para recrear con pregunta de seguridad...');
+
+    const { error: deleteError } = await supabase
+      .from('usuarios')
+      .delete()
+      .eq('id', existente.id);
+
+    if (deleteError) {
+      console.error('❌ Error al eliminar el usuario existente:', deleteError.message);
+      process.exit(1);
+    }
+    console.log('   ✅ Usuario eliminado.\n');
   }
 
-  // 3. Hashear la contraseña
-  const password_hash = await bcrypt.hash(SUPERADMIN.password, 10);
+  // 3. Hashear la contraseña y la respuesta de seguridad
+  const [password_hash, respuesta_seguridad_hash] = await Promise.all([
+    bcrypt.hash(SUPERADMIN.password, 10),
+    bcrypt.hash(SUPERADMIN.respuesta_seguridad.toLowerCase().trim(), 10),
+  ]);
 
-  // 4. Insertar el superadmin
+  // 4. Insertar el superadmin con pregunta de seguridad
   const { data: usuario, error: insertError } = await supabase
     .from('usuarios')
     .insert({
@@ -80,6 +97,9 @@ async function main() {
       rol_id: rol.id,
       pais_id: null,
       estado: 'activo',
+      pregunta_seguridad: SUPERADMIN.pregunta_seguridad,
+      respuesta_seguridad_hash,
+      password_updated_at: new Date().toISOString(),
     })
     .select('id, nombre, apellido, email, username')
     .single();
@@ -90,12 +110,15 @@ async function main() {
   }
 
   console.log('✅ Superadmin creado exitosamente:\n');
-  console.log(`   Nombre:   ${usuario.nombre} ${usuario.apellido}`);
-  console.log(`   Email:    ${usuario.email}`);
-  console.log(`   Username: ${usuario.username}`);
-  console.log(`   Password: ${SUPERADMIN.password}`);
-  console.log(`   ID:       ${usuario.id}`);
+  console.log(`   Nombre:              ${usuario.nombre} ${usuario.apellido}`);
+  console.log(`   Email:               ${usuario.email}`);
+  console.log(`   Username:            ${usuario.username}`);
+  console.log(`   Password:            ${SUPERADMIN.password}`);
+  console.log(`   ID:                  ${usuario.id}`);
+  console.log(`   Pregunta seguridad:  ${SUPERADMIN.pregunta_seguridad}`);
+  console.log(`   Respuesta seguridad: ${SUPERADMIN.respuesta_seguridad}`);
   console.log('\n🔑 Ya puedes hacer login en POST /api/auth/login');
+  console.log('🔐 Recuperación disponible en POST /api/auth/forgot-password');
 }
 
 main().catch((err) => {

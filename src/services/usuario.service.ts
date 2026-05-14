@@ -8,6 +8,7 @@ import {
   ActualizarUsuarioDto,
   FiltrosUsuarioDto,
   JwtPayload,
+  AdminChangePasswordDto,
 } from '../types/dtos';
 import { Usuario } from '../types/models';
 
@@ -158,6 +159,38 @@ export const usuarioService = {
       modulo: 'usuarios',
       registro_id: id,
       descripcion: `Usuario desactivado: ${existing.username}`,
+    });
+  },
+
+  // ─── Parte 17: Superadmin cambia contraseña de otro usuario ────────────────
+
+  /**
+   * Solo el superadmin puede cambiar la contraseña de cualquier usuario
+   * sin necesidad de conocer la contraseña actual.
+   */
+  async cambiarPasswordAdmin(
+    id: number,
+    data: AdminChangePasswordDto,
+    solicitante: JwtPayload
+  ): Promise<void> {
+    const existing = await usuarioRepository.findById(id);
+    if (!existing) {
+      throw new AppError('Recurso no encontrado', 404);
+    }
+
+    const password_hash = await bcrypt.hash(data.nueva_password, SALT_ROUNDS);
+
+    await usuarioRepository.update(id, {
+      password_hash,
+      password_updated_at: new Date().toISOString(),
+    } as Partial<Usuario>);
+
+    await auditoriaRepository.registrar({
+      usuario_id: solicitante.usuario_id,
+      accion: 'ADMIN_CHANGE_PASSWORD',
+      modulo: 'usuarios',
+      registro_id: id,
+      descripcion: `Contraseña cambiada por superadmin para usuario: ${existing.username}`,
     });
   },
 };

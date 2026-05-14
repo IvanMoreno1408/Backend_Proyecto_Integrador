@@ -34,6 +34,10 @@ export interface Usuario {
   pais_id: number | null;
   estado: string;
   ultimo_acceso: string | null;
+  // Parte 17: recuperación de contraseña por pregunta de seguridad
+  pregunta_seguridad: string | null;
+  respuesta_seguridad_hash: string | null;
+  password_updated_at: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -31,6 +31,33 @@ export interface LoginDto {
   password: string;
 }
 
+// Parte 17: recuperación y gestión de contraseña
+
+export interface ForgotPasswordDto {
+  /** Puede ser username o email */
+  identifier: string;
+}
+
+export interface ResetPasswordDto {
+  username: string;
+  respuesta_seguridad: string;
+  nueva_password: string;
+}
+
+export interface ChangePasswordDto {
+  password_actual: string;
+  nueva_password: string;
+}
+
+export interface AdminChangePasswordDto {
+  nueva_password: string;
+}
+
+export interface SecurityQuestionDto {
+  pregunta_seguridad: string;
+  respuesta_seguridad: string;
+}
+
 // ─── Pais ─────────────────────────────────────────────────────────────────────
 
 export interface CrearPaisDto {

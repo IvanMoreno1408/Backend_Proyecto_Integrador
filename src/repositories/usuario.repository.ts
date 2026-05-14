@@ -7,7 +7,7 @@ export interface UsuarioConRol extends Usuario {
   roles?: { nombre: string };
 }
 
-export type UsuarioSinPassword = Omit<UsuarioConRol, 'password_hash'>;
+export type UsuarioSinPassword = Omit<UsuarioConRol, 'password_hash' | 'respuesta_seguridad_hash'>;
 
 export const usuarioRepository = {
   async findByUsername(username: string): Promise<UsuarioConRol | null> {
@@ -40,11 +40,36 @@ export const usuarioRepository = {
     return { ...data, rol: data.roles?.nombre ?? '' };
   },
 
+  /**
+   * Parte 17: busca por username o email (para forgot-password)
+   */
+  async findByIdentifier(identifier: string): Promise<UsuarioConRol | null> {
+    // Intentar por username primero
+    const byUsername = await supabase
+      .from('usuarios')
+      .select('*, roles(nombre)')
+      .eq('username', identifier)
+      .single();
+    if (!byUsername.error && byUsername.data) {
+      return { ...byUsername.data, rol: byUsername.data.roles?.nombre ?? '' };
+    }
+    // Luego por email
+    const byEmail = await supabase
+      .from('usuarios')
+      .select('*, roles(nombre)')
+      .eq('email', identifier)
+      .single();
+    if (!byEmail.error && byEmail.data) {
+      return { ...byEmail.data, rol: byEmail.data.roles?.nombre ?? '' };
+    }
+    return null;
+  },
+
   async findAll(filtros: FiltrosUsuarioDto): Promise<UsuarioSinPassword[]> {
     let query = supabase
       .from('usuarios')
       .select(
-        'id, nombre, apellido, email, username, rol_id, pais_id, estado, ultimo_acceso, created_at, updated_at, roles(nombre)'
+        'id, nombre, apellido, email, username, rol_id, pais_id, estado, ultimo_acceso, pregunta_seguridad, password_updated_at, created_at, updated_at, roles(nombre)'
       );
 
     if (filtros.pais_id !== undefined) {

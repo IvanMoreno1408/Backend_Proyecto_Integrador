@@ -55,6 +55,11 @@ const actualizarUsuarioSchema = z.object({
   estado: z.enum(['activo', 'inactivo']).optional(),
 });
 
+// Parte 17: superadmin cambia contraseña de otro usuario
+const adminChangePasswordSchema = z.object({
+  nueva_password: z.string().min(6, 'La nueva contraseña debe tener al menos 6 caracteres'),
+});
+
 // ─── Controller ───────────────────────────────────────────────────────────────
 
 export const usuarioController = {
@@ -121,6 +126,33 @@ export const usuarioController = {
       }
       await usuarioService.desactivar(id, req.usuario);
       sendResponse(res, 200, null, 'Usuario desactivado exitosamente');
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  /**
+   * PUT /api/usuarios/:id/password
+   * Solo superadmin puede cambiar la contraseña de otro usuario.
+   */
+  async cambiarPasswordAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        return next(new AppError('ID inválido', 400));
+      }
+      if (!req.usuario) {
+        return next(new AppError('Token de autenticación requerido', 401));
+      }
+
+      const result = adminChangePasswordSchema.safeParse(req.body);
+      if (!result.success) {
+        const errors = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+        return next(new AppError('Datos de entrada inválidos', 422, errors));
+      }
+
+      await usuarioService.cambiarPasswordAdmin(id, result.data, req.usuario);
+      sendResponse(res, 200, null, 'Contraseña actualizada exitosamente');
     } catch (err) {
       next(err);
     }
